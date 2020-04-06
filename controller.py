@@ -146,7 +146,44 @@ class ShardHandler(object):
         """Loads the data from all shards, removes the extra 'database' file,
         and writes the new number of shards to disk.
         """
-        pass
+        self.mapping = self.load_map()
+        # data = self.load_data_from_shards()
+        keys = [int(z) for z in self.get_shard_ids()]
+        keys.sort()
+        
+        if len(keys) <= 1:
+            raise Exception("No.  <= 1")
+
+        try:
+            new_shard_num = max(keys)
+
+        except ValueError:
+
+            raise Exception("No keys < 1")
+
+        self.mapping = {}
+        if new_shard_num > 0:
+
+            self.build_shards(new_shard_num, load_data_from_file())
+
+            # if os.path.exists(f"data/{new_shard_num}.txt"):
+            #     os.remove(f"data/{new_shard_num}.txt")
+
+        
+        else:
+            self.write_map()
+
+
+        # spliced_data = self._generate_sharded_data(new_shard_num, data)
+
+        if os.path.exists(f"data/{new_shard_num}.txt"):
+            os.remove(f"data/{new_shard_num}.txt")
+
+        # for num, d in enumerate(spliced_data):
+        #     self._write_shard(num, d)
+
+
+        self.sync_replication()
 
     def add_replication(self) -> None:
         """Add a level of replication so that each shard has a backup. Label
@@ -210,10 +247,8 @@ class ShardHandler(object):
 
 s = ShardHandler()
 
-s.build_shards(5, load_data_from_file())
-
-print(s.mapping.keys())
-
-s.add_shard()
+# s.build_shards(5, load_data_from_file())
+# s.add_shard()
+# s.remove_shard()
 
 print(s.mapping.keys())

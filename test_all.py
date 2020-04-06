@@ -115,6 +115,7 @@ def test_remove_shard(sh):
 
 
 def test_remove_shard_single_shard(sh):
+    breakpoint()
     with pytest.raises(Exception):
         sh.remove_shard()
 
